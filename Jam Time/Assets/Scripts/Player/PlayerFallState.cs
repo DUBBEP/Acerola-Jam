@@ -30,8 +30,10 @@ public class PlayerFallState : PlayerBaseState
         lastJumpTime -= Time.deltaTime;
 
         // Switch to grounded state
-        Vector2 rayStart = new Vector2(player.transform.position.x, player.transform.position.y - 0.55f);
-        if (Physics2D.Raycast(rayStart, Vector2.down, 0.5f))
+        Vector2 leftRay = new Vector2(player.transform.position.x - 0.4f, player.transform.position.y - 0.55f);
+        Vector2 rightRay = new Vector2(player.transform.position.x + 0.4f, player.transform.position.y - 0.55f);
+        
+        if (Physics2D.Raycast(leftRay, Vector2.down, 0.5f) || Physics2D.Raycast(rightRay, Vector2.down, 0.5f))
         {
             // switch to walk if horizontal detected else switch to walk
             if (lastJumpTime >= 0)

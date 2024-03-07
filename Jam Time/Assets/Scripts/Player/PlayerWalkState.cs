@@ -22,13 +22,21 @@ public class PlayerWalkState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        Vector2 leftRay = new Vector2(player.transform.position.x - 0.4f, player.transform.position.y - 0.55f);
+        Vector2 rightRay = new Vector2(player.transform.position.x + 0.4f, player.transform.position.y - 0.55f);
+
         // switch to jump when pressing space and on the ground. use ray cast to check if on ground.
-        Vector2 rayStart = new Vector2(player.transform.position.x, player.transform.position.y - 0.55f);
-        if (Input.GetKeyDown(KeyCode.Space) && Physics2D.Raycast(rayStart, Vector2.down, 0.5f))
+        if (Input.GetKeyDown(KeyCode.Space) && (Physics2D.Raycast(leftRay, Vector2.down, 0.5f) || Physics2D.Raycast(rightRay, Vector2.down, 0.5f)))
             player.SwitchState(player.jumpState);
 
         if (Input.GetAxis("Horizontal") == 0)
             player.SwitchState(player.idleState);
+
+
+        // switch to fall when not on the ground
+        if (!Physics2D.Raycast(leftRay, Vector2.down, 0.5f) || !Physics2D.Raycast(rightRay, Vector2.down, 0.5f))
+            player.SwitchState(player.fallState);
+
 
     }
 
