@@ -42,8 +42,7 @@ public class PlayerIdleState : PlayerBaseState
         if (Input.GetAxis("Horizontal") != 0)
             player.SwitchState(player.walkState);
 
-        if (player.touchingTerrain)
-            player.CheckWallStick();
+        player.CheckWallStick();
 
         //switch to pivot dash
         player.CheckPivotDash();
@@ -57,18 +56,18 @@ public class PlayerIdleState : PlayerBaseState
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
     public override void OnCollisionExit2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = false;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
     public override void OnCollisionStay2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 }

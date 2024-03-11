@@ -1,9 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AlterStateManager : MonoBehaviour
 {
+    public enum AlterType
+    {
+        dash,
+        wallStick
+    }
+
+    public AlterType type;
+    
     AlterBaseState activeState;
     public AlterEmptyState emptyState = new AlterEmptyState();
     public AlterHoldingState holdingState = new AlterHoldingState();
@@ -12,6 +21,8 @@ public class AlterStateManager : MonoBehaviour
     public GameObject targetPlayer;
 
     public bool playerInRange;
+
+
 
 
     private void Start()
@@ -40,5 +51,16 @@ public class AlterStateManager : MonoBehaviour
         activeState.ExitState(this);
         activeState = newState;
         activeState.EnterState(this);
+    }
+
+    public void AlterToggle(bool toggle)
+    {
+        PlayerStateManager player = targetPlayer.GetComponent<PlayerStateManager>();
+
+        if (type == AlterType.dash)
+            player.pivotDashAquired = toggle;
+        else if ( type == AlterType.wallStick)
+            player.wallStickAquired = toggle;
+
     }
 }

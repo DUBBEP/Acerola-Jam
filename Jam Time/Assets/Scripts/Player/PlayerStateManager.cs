@@ -12,8 +12,6 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerPivotDashState pivotDashState = new PlayerPivotDashState();
     public PlayerKnockBackState knockBackState = new PlayerKnockBackState();
     public PlayerWallStickState wallStickState = new PlayerWallStickState();
-    public PlayerWallCrawlState wallCrawlState = new PlayerWallCrawlState();
-    public PlayerWallIdleState wallIdleState = new PlayerWallIdleState();
 
     [Header("Parameters")]
     public float walkSpeed = 3f;
@@ -22,7 +20,8 @@ public class PlayerStateManager : MonoBehaviour
     public float jumpingAirSpeed = 3f;
     public float jumpGravityMultiplyer = 7f;
     public float fallingAirSpeed = 3f;
-    public float wallCrawlSpeed = 10f;
+    public float wallCrawlSpeed = 5f;
+    public float wallCoyoteTime = 0.15f;
 
 
     [Header("Components")]
@@ -45,6 +44,8 @@ public class PlayerStateManager : MonoBehaviour
     public float curXVel = 0f;
     public float xInput;
     public float yInput;
+    public float wallCoyoteWindow = 0f;
+
 
 
 
@@ -122,10 +123,18 @@ public class PlayerStateManager : MonoBehaviour
 
     public void CheckWallStick()
     {
+        if (wallCoyoteWindow >= 0)
+            touchingTerrain = true;
+        else
+            touchingTerrain = false;
+
+        if (wallCoyoteWindow >= 0)
+            wallCoyoteWindow -= Time.deltaTime;
+
         if (!wallStickAquired) 
             return;
 
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode.O) && wallCoyoteWindow >= 0)
             SwitchState(wallStickState);
     }
 

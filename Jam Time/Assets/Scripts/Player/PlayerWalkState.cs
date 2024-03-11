@@ -44,8 +44,7 @@ public class PlayerWalkState : PlayerBaseState
         if (coyoteTime < 0)
             player.SwitchState(player.fallState);
 
-        if (player.touchingTerrain)
-            player.CheckWallStick();
+        player.CheckWallStick();
 
         // Switch to airdash
         player.CheckPivotDash();
@@ -64,19 +63,19 @@ public class PlayerWalkState : PlayerBaseState
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
 
     public override void OnCollisionStay2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
     public override void OnCollisionExit2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = false;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 }

@@ -44,8 +44,7 @@ public class PlayerJumpState : PlayerBaseState
         else
             player.rig.gravityScale = player.jumpGravityMultiplyer * 2f;
 
-        if (player.touchingTerrain)
-            player.CheckWallStick();
+        player.CheckWallStick();
 
         //Switch to pivot dash
         player.CheckPivotDash();
@@ -59,19 +58,19 @@ public class PlayerJumpState : PlayerBaseState
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
 
     public override void OnCollisionStay2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = true;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 
     public override void OnCollisionExit2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.touchingTerrain = false;
+            player.wallCoyoteWindow = player.wallCoyoteTime;
     }
 }

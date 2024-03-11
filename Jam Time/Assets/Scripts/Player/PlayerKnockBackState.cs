@@ -29,6 +29,9 @@ public class PlayerKnockBackState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+            player.SwitchState(player.jumpState);
+
         stunTimer -= Time.deltaTime;
 
         if (stunTimer < 0)

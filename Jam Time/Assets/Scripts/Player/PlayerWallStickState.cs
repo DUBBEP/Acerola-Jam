@@ -60,8 +60,7 @@ public class PlayerWallStickState : PlayerBaseState
         if (Input.GetKeyDown(KeyCode.O))
             player.SwitchState(player.fallState);
 
-        Debug.Log("current surface: " + (bool)currentSurface);
-
+        player.CheckPivotDash();
 
         // create rays for each side of the character
         Ray2D leftRay = new Ray2D(new Vector2(player.transform.position.x - rayOffSet, player.transform.position.y), Vector2.left);
@@ -83,7 +82,7 @@ public class PlayerWallStickState : PlayerBaseState
         surfacesInContact = FindCurrentWall(leftWallDetect, rightWallDetect, ceilingDetect, floorDetect);
 
         // find how many walls are in contact.
-        if (surfacesInContact > 0)
+        if (surfacesInContact > 0 || (surfacesInContact == 0 && FindOuterCorner(player.transform.position) == 0))
             onLedge = false;
 
         // If we detect a wall and ceiling then we must be on a corner
@@ -117,8 +116,6 @@ public class PlayerWallStickState : PlayerBaseState
                     ledgePos = player.transform.position;
                     onLedge = true;
                 }
-
-                Debug.Log("Player has hit Edge");
 
 
                 // add ledge logic
@@ -230,10 +227,14 @@ public class PlayerWallStickState : PlayerBaseState
     {
         Debug.Log("Finding outer corner.");
         Debug.Log("previous surface type: " + previousSurfaceType);
+
+        rayCastDistance = 0.6f;
+
+
         if (previousSurfaceType == "left")
         {
-            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), 0.2f);
-            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), 0.2f);
+            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), rayCastDistance);
+            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), rayCastDistance);
 
             Debug.DrawRay(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), Color.red, 0.2f);
             Debug.DrawRay(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), Color.red, 0.2f);
@@ -241,28 +242,28 @@ public class PlayerWallStickState : PlayerBaseState
 
 
             if (topHit)
-                return 1; // bottom left corner moving down
+                return 1; // bottom right corner moving down
             else if (bottomHit)
-                return 2; // top left corner moving up
+                return 2; // top right corner moving up
         }
         else if (previousSurfaceType == "right")
         {
-            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), 0.2f);
-            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), 0.2f);
+            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), rayCastDistance);
+            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), rayCastDistance);
 
             Debug.DrawRay(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), Color.red, 0.2f);
             Debug.DrawRay(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), Color.red, 0.2f);
 
 
             if (topHit)
-                return 3; // bottom right corner moving down
+                return 3; // bottom left corner moving down
             else if (bottomHit)
-                return 4; // top right corner moving up
+                return 4; // top left corner moving up
         }
         else if (previousSurfaceType == "up")
         {
-            RaycastHit2D leftHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), 0.2f);
-            RaycastHit2D rightHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), 0.2f);
+            RaycastHit2D leftHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), rayCastDistance);
+            RaycastHit2D rightHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), rayCastDistance);
 
             Debug.DrawRay(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), Color.red, 0.2f);
             Debug.DrawRay(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), Color.red, 0.2f);
@@ -275,8 +276,8 @@ public class PlayerWallStickState : PlayerBaseState
         }
         else if (previousSurfaceType == "down")
         {
-            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), 0.2f);
-            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), 0.2f);
+            RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), rayCastDistance);
+            RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), rayCastDistance);
 
             Debug.DrawRay(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), Color.red, 0.2f);
             Debug.DrawRay(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), Color.red, 0.2f);
@@ -300,17 +301,17 @@ public class PlayerWallStickState : PlayerBaseState
         {
             case 0:
                 return;
-            case 1: // bottom left corner moving down
-                EdgeMoveLogic(false, true, "down", "bottomLeft", player);
-                break;
-            case 2: // top left corner moving up
-                EdgeMoveLogic(true, true, "up", "topLeft", player);
-                break;
-            case 3: // bottom right corner moving down
+            case 1: // bottom right corner moving down
                 EdgeMoveLogic(false, false, "down", "bottomRight", player);
                 break;
-            case 4: // top right corner moving up
+            case 2: // top right corner moving up
                 EdgeMoveLogic(true, false, "up", "topRight", player);
+                break;
+            case 3: // bottom left corner moving down
+                EdgeMoveLogic(false, true, "down", "bottomLeft", player);
+                break;
+            case 4: // top left corner moving up
+                EdgeMoveLogic(true, true, "up", "topLeft", player);
                 break;
             case 5: // bottom right corner moving right
                 EdgeMoveLogic(false, false, "right", "bottomRight", player);

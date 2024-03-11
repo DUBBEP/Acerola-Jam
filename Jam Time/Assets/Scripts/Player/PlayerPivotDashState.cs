@@ -54,6 +54,8 @@ public class PlayerPivotDashState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+        player.CheckWallStick();
+
         floatTime -= Time.deltaTime;
         exitTime -= Time.deltaTime;
 

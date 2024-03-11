@@ -37,21 +37,9 @@ public class AlterEmptyState : AlterBaseState
         if (alter.playerInRange && Input.GetKeyDown(KeyCode.E))
         {
             GameUI.instance.PromptItemPlacement(true);
-            alter.targetPlayer.GetComponent<PlayerStateManager>().pivotDashAquired = false;
+            alter.AlterToggle(false);
             alter.itemVisual.enabled = true;
             alter.SwitchState(alter.holdingState);
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
