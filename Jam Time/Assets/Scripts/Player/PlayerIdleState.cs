@@ -11,7 +11,10 @@ public class PlayerIdleState : PlayerBaseState
 
         player.airJumpAvailable = true;
         player.dashRenewed = true;
+        player.glideRenewed = true;
         player.isGrounded = true;
+
+
         
         //change color to blue
         player.sr.color = new Color(0.145f, 0.584f, 0.623f, 1);
@@ -26,6 +29,8 @@ public class PlayerIdleState : PlayerBaseState
     {
         if (Mathf.Abs(Input.GetAxis("Horizontal")) < 0.1f)
             player.rig.velocity /= new Vector2(2, 1);
+
+
 
 
         // cast a ray to check if we are on the ground and pressing space. So switch to jump state
@@ -56,18 +61,18 @@ public class PlayerIdleState : PlayerBaseState
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.wallCoyoteWindow = player.wallCoyoteTime;
+            player.wallCoyoteWindow = player.wallCoyoteTime * 1000;
     }
 
     public override void OnCollisionExit2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.wallCoyoteWindow = player.wallCoyoteTime;
+            player.wallCoyoteWindow = player.wallCoyoteTime * 1000;
     }
 
     public override void OnCollisionStay2D(PlayerStateManager player, Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Terrain"))
-            player.wallCoyoteWindow = player.wallCoyoteTime;
+            player.wallCoyoteWindow = player.wallCoyoteTime * 1000;
     }
 }

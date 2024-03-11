@@ -16,6 +16,8 @@ public class PlayerPivotDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
 
+        Debug.Log("Hello From Dash");
+
         if (player.dashRenewed)
             floatTime = 0.2f;
         else

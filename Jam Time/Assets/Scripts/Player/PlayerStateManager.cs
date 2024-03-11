@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerStateManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerPivotDashState pivotDashState = new PlayerPivotDashState();
     public PlayerKnockBackState knockBackState = new PlayerKnockBackState();
     public PlayerWallStickState wallStickState = new PlayerWallStickState();
+    public PlayerGlideState glideState = new PlayerGlideState();
 
     [Header("Parameters")]
     public float walkSpeed = 3f;
@@ -19,32 +21,41 @@ public class PlayerStateManager : MonoBehaviour
     public float jumpForce = 33f;
     public float jumpingAirSpeed = 3f;
     public float jumpGravityMultiplyer = 7f;
+    public float jumpBuffer = 0.15f;
     public float fallingAirSpeed = 3f;
+    public float glideAirSpeed = 1.5f;
     public float wallCrawlSpeed = 5f;
     public float wallCoyoteTime = 0.15f;
-
+    
 
     [Header("Components")]
     public Rigidbody2D rig;
     public SpriteRenderer sr;
+    public PlayerController playerController;
 
 
     [Header("Progression")]
     public bool pivotDashAquired;
     public bool wallStickAquired;
+    public bool glideAquired;
 
 
 
     [Header("Info")]
     public bool airJumpAvailable;
+    public bool glideRenewed;
     public bool dashRenewed;
     public bool isGrounded;
     public bool isFacingRight;
-    public bool touchingTerrain;
+    public bool controlsActive;
     public float curXVel = 0f;
     public float xInput;
     public float yInput;
     public float wallCoyoteWindow = 0f;
+    public float pauseControlTime = 0f;
+
+    private bool playerIsPaused;
+    
 
 
 
@@ -55,6 +66,10 @@ public class PlayerStateManager : MonoBehaviour
     {
         pivotDashAquired = true;
         wallStickAquired = true;
+        glideAquired = true;
+
+
+        controlsActive = true;
 
         activeState = idleState;
 
@@ -64,12 +79,35 @@ public class PlayerStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        activeState.UpdateState(this);
+        if (playerController.dead)
+            controlsActive = false;
+        else 
+            controlsActive = true;
+
+        if (controlsActive)
+        {
+            activeState.UpdateState(this);
+            xInput = Input.GetAxis("Horizontal");
+            yInput = Input.GetAxis("Vertical");
+        }
+
+        if (pauseControlTime > 0f)
+        {
+            controlsActive = false;
+            playerIsPaused = true; ;
+            pauseControlTime -= Time.deltaTime;
+            xInput = 0;
+            yInput = 0;
+        }
+        else if (pauseControlTime < 0f && playerIsPaused)
+        {
+            controlsActive = true;
+            playerIsPaused = false;
+        }
 
         curXVel = rig.velocity.x;
 
-        xInput = Input.GetAxis("Horizontal");
-        yInput = Input.GetAxis("Vertical");
+
     }
 
     public void SwitchState(PlayerBaseState state)
@@ -78,7 +116,6 @@ public class PlayerStateManager : MonoBehaviour
         activeState = state;
         state.EnterState(this);
     }
-
     private void FixedUpdate()
     {
         activeState.PhysicsUpdate(this);
@@ -108,6 +145,9 @@ public class PlayerStateManager : MonoBehaviour
     }
 
 
+
+
+
     public void CheckPivotDash()
     {
         if (!pivotDashAquired)
@@ -123,10 +163,6 @@ public class PlayerStateManager : MonoBehaviour
 
     public void CheckWallStick()
     {
-        if (wallCoyoteWindow >= 0)
-            touchingTerrain = true;
-        else
-            touchingTerrain = false;
 
         if (wallCoyoteWindow >= 0)
             wallCoyoteWindow -= Time.deltaTime;
@@ -137,7 +173,6 @@ public class PlayerStateManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O) && wallCoyoteWindow >= 0)
             SwitchState(wallStickState);
     }
-
 
 
     public void AirMovement(float speed)
@@ -151,7 +186,7 @@ public class PlayerStateManager : MonoBehaviour
         //    rig.AddForce(new Vector2(Input.GetAxis("Horizontal"), 0) * (airSpeed * 5f));
 
         if ((rig.velocity.x > 0 && airAcceleration < 0) || (rig.velocity.x < 0 && airAcceleration > 0))
-            rig.velocity = new Vector2(rig.velocity.x + airAcceleration, rig.velocity.y);
+            rig.velocity += new Vector2(airAcceleration, 0);
     }
 
     public void CheckFacingDirection()
@@ -160,7 +195,6 @@ public class PlayerStateManager : MonoBehaviour
             isFacingRight = true;
         else if (xInput < 0)
             isFacingRight = false;
-
     }
 
     public bool CheckForGround()

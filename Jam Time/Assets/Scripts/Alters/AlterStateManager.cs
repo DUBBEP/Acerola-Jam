@@ -8,7 +8,8 @@ public class AlterStateManager : MonoBehaviour
     public enum AlterType
     {
         dash,
-        wallStick
+        wallStick,
+        glide
     }
 
     public AlterType type;
@@ -61,6 +62,9 @@ public class AlterStateManager : MonoBehaviour
             player.pivotDashAquired = toggle;
         else if ( type == AlterType.wallStick)
             player.wallStickAquired = toggle;
+        else if ( type == AlterType.glide)
+            player.glideAquired = toggle;
 
+        GameManager.instance.CheckGameProgress(this, toggle);
     }
 }

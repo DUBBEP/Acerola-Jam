@@ -33,9 +33,11 @@ public class PlayerFallState : PlayerBaseState
 
         // If player tries to jump in the air then start buffer timer
         if (Input.GetKeyDown(KeyCode.Space))
-            lastJumpTime = 0.15f;
+            lastJumpTime = player.jumpBuffer;
 
         lastJumpTime -= Time.deltaTime;
+
+
 
         // Switch to grounded state
 
@@ -63,6 +65,7 @@ public class PlayerFallState : PlayerBaseState
             {
                 player.SwitchState(player.jumpState);
                 player.airJumpAvailable = true;
+                player.glideRenewed = true;
             }
             else if (player.xInput != 0)
                 player.SwitchState(player.walkState);
@@ -70,11 +73,16 @@ public class PlayerFallState : PlayerBaseState
                 player.SwitchState(player.idleState);
         }
 
+        // switch to wall stick
         player.CheckWallStick();
 
         // switch to pivot dash
         player.CheckPivotDash();
-        
+
+        // switch to glide
+        if (player.glideAquired && Input.GetKey(KeyCode.Space) && lastJumpTime < 0)
+            player.SwitchState(player.glideState);
+
     }
 
     public override void PhysicsUpdate(PlayerStateManager player)

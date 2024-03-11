@@ -12,6 +12,10 @@ public class GameUI : MonoBehaviour
     public TextMeshProUGUI ItemPromptText;
     public Image healthBar;
 
+    public GameObject dashIcon;
+    public GameObject glideIcon;
+    public GameObject wallStickIcon;
+
     public float barMax;
 
 
@@ -51,5 +55,16 @@ public class GameUI : MonoBehaviour
     public void updateHealthBar(int value)
     {
         healthBar.fillAmount = (float)value / barMax;
+    }
+
+    public void UpdateProgressionUI(AlterStateManager alter, bool toggle)
+    {
+
+        if (alter.type == AlterStateManager.AlterType.dash)
+            dashIcon.SetActive(toggle);
+        else if (alter.type == AlterStateManager.AlterType.wallStick)
+            wallStickIcon.SetActive(toggle);
+        else if (alter.type == AlterStateManager.AlterType.glide)
+            glideIcon.SetActive(toggle);
     }
 }

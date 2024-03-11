@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class PlayerWallStickState : PlayerBaseState
 {
-    bool inCorner;
     bool onLedge;
+    bool exitingState;
 
     Vector2 ledgePos;
 
     float rayOffSet = 0.52f;
     float rayCastDistance = 0.02f;
+    float crawlAccelMult = 4f;
 
     int surfacesInContact;
 
@@ -27,12 +28,15 @@ public class PlayerWallStickState : PlayerBaseState
 
         player.rig.gravityScale = 0f;
 
+        exitingState = false;
+
     }
 
     public override void ExitState(PlayerStateManager player)
     {
         player.SetDefaultgravity();
-        player.touchingTerrain = false;
+
+        exitingState = true;
     }
 
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
@@ -59,6 +63,9 @@ public class PlayerWallStickState : PlayerBaseState
     {
         if (Input.GetKeyDown(KeyCode.O))
             player.SwitchState(player.fallState);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            player.SwitchState(player.jumpState);
 
         player.CheckPivotDash();
 
@@ -92,17 +99,26 @@ public class PlayerWallStickState : PlayerBaseState
         // allow vertical movement on walls
         else if (surfacesInContact > 0 && (currentSurface == leftWallDetect || currentSurface == rightWallDetect))
         {
-            Debug.Log("On Walls");
             float crawlSpeed = player.yInput * player.wallCrawlSpeed;
-            player.rig.velocity = new Vector2(0, crawlSpeed);
+
+            if (player.yInput != 0 && !exitingState)
+                player.rig.velocity = new Vector2(0, crawlSpeed);
+
+
+
+            CheckPlayerDistance("horizontal", player);
         }
 
         // allow horizontal movement on ceilings
         else if (surfacesInContact > 0 && (currentSurface == ceilingDetect || currentSurface == floorDetect))
         {
-            Debug.Log("On Ceiling/floor");
             float crawlSpeed = player.xInput * player.wallCrawlSpeed;
-            player.rig.velocity = new Vector2(crawlSpeed, 0);
+
+            if (player.xInput != 0 && !exitingState)
+                player.rig.velocity = new Vector2(crawlSpeed, 0);
+
+            CheckPlayerDistance("vertical", player);
+
         }
 
         // If the wall we're on dissapears then assume its a ledge
@@ -132,6 +148,40 @@ public class PlayerWallStickState : PlayerBaseState
         // If we're not moving then transition to idle.
     }
 
+
+    void CheckPlayerDistance(string wallType, PlayerStateManager player)
+    {
+        float distanceFromWall = 0f;
+
+        if (wallType == "vertical")
+            distanceFromWall = player.transform.position.y - currentSurface.point.y;
+        else if (wallType == "horizontal")
+            distanceFromWall = player.transform.position.x - currentSurface.point.x;
+
+        if (Mathf.Abs(distanceFromWall) > 0.51f)
+            CorrectPlayerDistance(distanceFromWall, wallType, player);
+    }
+
+    void CorrectPlayerDistance(float distanceFromWall, string wallType, PlayerStateManager player)
+    {
+        float correctionValue = Mathf.Abs(distanceFromWall) - 0.52f;
+
+        if (wallType == "vertical")
+        {
+            if (distanceFromWall > 0)
+                player.transform.position = new Vector2(player.transform.position.x, player.transform.position.y - correctionValue);
+            else
+                player.transform.position = new Vector2(player.transform.position.x, player.transform.position.y + correctionValue);
+        }
+        else if (wallType == "horizontal")
+        {
+            if (distanceFromWall > 0)
+                player.transform.position = new Vector2(player.transform.position.x - correctionValue, player.transform.position.y);
+            else
+                player.transform.position = new Vector2(player.transform.position.x + correctionValue, player.transform.position.y);
+        }
+
+    }
 
 
     // function will find the number of walls in contact and return that value.
@@ -225,9 +275,6 @@ public class PlayerWallStickState : PlayerBaseState
     // This function finds the corner that the player is on as well as what direction the player is heading in using rays and a reference from the most previous surface interaction
     int FindOuterCorner(Vector2 playerPos)
     {
-        Debug.Log("Finding outer corner.");
-        Debug.Log("previous surface type: " + previousSurfaceType);
-
         rayCastDistance = 0.6f;
 
 
@@ -295,7 +342,6 @@ public class PlayerWallStickState : PlayerBaseState
     // this function determinse organizes how the player should act in each corner
     void EdgeLogic(int curCorner, PlayerStateManager player)
     {
-        Debug.Log("outer corner found: " + curCorner);
 
         switch (curCorner)
         {

@@ -12,6 +12,7 @@ public class PlayerWalkState : PlayerBaseState
 
         player.airJumpAvailable = true;
         player.dashRenewed = true;
+        player.glideRenewed = true;
         player.isGrounded = true;
 
         // change color
