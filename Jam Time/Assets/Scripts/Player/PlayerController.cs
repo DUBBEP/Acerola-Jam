@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
         GameUI.instance.updateHealthBar(curHp);
 
         // switch playerstate to knockback state
-        stateManager.SwitchState(stateManager.knockBackState);
+        stateManager.SwitchState(stateManager.damageState);
 
         if (curHp < 0)
             Die();

@@ -14,6 +14,8 @@ public class PlayerStateManager : MonoBehaviour
     public PlayerKnockBackState knockBackState = new PlayerKnockBackState();
     public PlayerWallStickState wallStickState = new PlayerWallStickState();
     public PlayerGlideState glideState = new PlayerGlideState();
+    public PlayerDamageState damageState = new PlayerDamageState();
+
 
     [Header("Parameters")]
     public float walkSpeed = 3f;
