@@ -12,11 +12,10 @@ public class PlayerWallStickState : PlayerBaseState
 
     float rayOffSet = 0.52f;
     float rayCastDistance = 0.02f;
-    float crawlAccelMult = 4f;
 
     int surfacesInContact;
 
-    string previousSurfaceType;
+    string currentSurfaceType;
 
     RaycastHit2D currentSurface;
 
@@ -24,11 +23,14 @@ public class PlayerWallStickState : PlayerBaseState
     {
         Debug.Log("Hello from wallstick");
 
-        player.sr.color = Color.black;
-
         player.rig.gravityScale = 0f;
 
         exitingState = false;
+
+        player.ani.SetBool("isAirborne", false);
+        player.ani.SetBool("isMagnetized", true);
+
+
 
     }
 
@@ -37,6 +39,9 @@ public class PlayerWallStickState : PlayerBaseState
         player.SetDefaultgravity();
 
         exitingState = true;
+
+        player.ani.SetBool("isMagnetized", false);
+
     }
 
     public override void OnCollisionEnter2D(PlayerStateManager player, Collision2D collision)
@@ -66,6 +71,12 @@ public class PlayerWallStickState : PlayerBaseState
 
         if (Input.GetKeyDown(KeyCode.Space))
             player.SwitchState(player.jumpState);
+
+        if (player.rig.velocity.x != 0 || player.rig.velocity.y != 0)
+            player.ani.SetBool("isMoving", true);
+        else
+            player.ani.SetBool("isMoving", false);
+
 
 
         player.CheckPivotDash();
@@ -103,9 +114,10 @@ public class PlayerWallStickState : PlayerBaseState
             float crawlSpeed = player.yInput * player.wallCrawlSpeed;
 
             if (player.yInput != 0 && !exitingState)
+            {
                 player.rig.velocity = new Vector2(0, crawlSpeed);
 
-
+            }
 
             CheckPlayerDistance("horizontal", player);
         }
@@ -116,7 +128,9 @@ public class PlayerWallStickState : PlayerBaseState
             float crawlSpeed = player.xInput * player.wallCrawlSpeed;
 
             if (player.xInput != 0 && !exitingState)
+            {
                 player.rig.velocity = new Vector2(crawlSpeed, 0);
+            }
 
             CheckPlayerDistance("vertical", player);
 
@@ -144,9 +158,8 @@ public class PlayerWallStickState : PlayerBaseState
         if (surfacesInContact == 0 && !onLedge)
             player.SwitchState(player.fallState);
 
-
-
-        // If we're not moving then transition to idle.
+        RotateCharacter(player);
+        
     }
 
 
@@ -194,25 +207,25 @@ public class PlayerWallStickState : PlayerBaseState
         {
             numberOfWallsInContact++;
             currentSurface = left;
-            previousSurfaceType = "left";
+            currentSurfaceType = "left";
         }
         if (right)
         {
             numberOfWallsInContact++;
             currentSurface = right;
-            previousSurfaceType = "right";
+            currentSurfaceType = "right";
         }
         if (up)
         {
             numberOfWallsInContact++;
             currentSurface = up;
-            previousSurfaceType = "up";
+            currentSurfaceType = "up";
         }
         if (down)
         {
             numberOfWallsInContact++;
             currentSurface = down;
-            previousSurfaceType = "down";
+            currentSurfaceType = "down";
         }
 
         return numberOfWallsInContact;
@@ -279,7 +292,7 @@ public class PlayerWallStickState : PlayerBaseState
         rayCastDistance = 0.6f;
 
 
-        if (previousSurfaceType == "left")
+        if (currentSurfaceType == "left")
         {
             RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), rayCastDistance);
             RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), rayCastDistance);
@@ -294,7 +307,7 @@ public class PlayerWallStickState : PlayerBaseState
             else if (bottomHit)
                 return 2; // top right corner moving up
         }
-        else if (previousSurfaceType == "right")
+        else if (currentSurfaceType == "right")
         {
             RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), rayCastDistance);
             RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), rayCastDistance);
@@ -308,7 +321,7 @@ public class PlayerWallStickState : PlayerBaseState
             else if (bottomHit)
                 return 4; // top left corner moving up
         }
-        else if (previousSurfaceType == "up")
+        else if (currentSurfaceType == "up")
         {
             RaycastHit2D leftHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, 0.52f), new Vector2(-1, 1), rayCastDistance);
             RaycastHit2D rightHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, 0.52f), new Vector2(1, 1), rayCastDistance);
@@ -322,7 +335,7 @@ public class PlayerWallStickState : PlayerBaseState
             else if (rightHit)
                 return 6; // bottom left corner moving left
         }
-        else if (previousSurfaceType == "down")
+        else if (currentSurfaceType == "down")
         {
             RaycastHit2D topHit = Physics2D.Raycast(playerPos + new Vector2(0.52f, -0.52f), new Vector2(1, -1), rayCastDistance);
             RaycastHit2D bottomHit = Physics2D.Raycast(playerPos + new Vector2(-0.52f, -0.52f), new Vector2(-1, -1), rayCastDistance);
@@ -460,5 +473,55 @@ public class PlayerWallStickState : PlayerBaseState
                 break;
         }
 
+    }
+
+    // rotate the character depending on which surface they're clinging onto
+    void RotateCharacter(PlayerStateManager player)
+    {
+        Vector2 rightOffSet = new Vector2(-0.5f, 0f);
+        Vector2 leftOffSet = new Vector2(0.5f, 0f);
+        Vector2 downOffSet = new Vector2(0, 0.5f);
+        Vector2 upOffSet = new Vector2(0, -0.5f);
+
+        float xVelocity = player.rig.velocity.x;
+        float yVelocity = player.rig.velocity.y;
+
+
+
+        switch (currentSurfaceType)
+        {
+            case "left":
+                player.playerVisual.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 270f));
+                player.playerVisual.transform.position = leftOffSet;
+                if (yVelocity > 0)
+                    player.playerVisual.localScale = new Vector2(-player.playerXScale, player.playerYScale);
+                else if (xVelocity < 0)
+                    player.playerVisual.localScale = new Vector3(player.playerXScale, player.playerYScale);
+                break;
+            case "right":
+                player.playerVisual.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90f));
+                player.playerVisual.transform.position = rightOffSet;
+                if (yVelocity < 0)
+                    player.playerVisual.localScale = new Vector2(-player.playerXScale, player.playerYScale);
+                else if (xVelocity > 0)
+                    player.playerVisual.localScale = new Vector3(player.playerXScale, player.playerYScale);
+                break;
+            case "up":
+                player.playerVisual.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 180f));
+                player.playerVisual.transform.position = upOffSet;
+                if (xVelocity > 0)
+                    player.playerVisual.localScale = new Vector2(-player.playerXScale, player.playerYScale);
+                else if (xVelocity < 0)
+                    player.playerVisual.localScale = new Vector3(player.playerXScale, player.playerYScale);
+                break;
+            case "down":
+                player.playerVisual.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0f));
+                player.playerVisual.transform.position = downOffSet;
+                if (xVelocity < 0)
+                    player.playerVisual.localScale = new Vector2(-player.playerXScale, player.playerYScale);
+                else if (xVelocity > 0)
+                    player.playerVisual.localScale = new Vector3(player.playerXScale, player.playerYScale);
+                break;
+        }
     }
 }

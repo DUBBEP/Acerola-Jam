@@ -34,6 +34,8 @@ public class PlayerStateManager : MonoBehaviour
     public Rigidbody2D rig;
     public SpriteRenderer sr;
     public PlayerController playerController;
+    public Animator ani;
+    public Transform playerVisual;
 
 
     [Header("Progression")]
@@ -55,6 +57,8 @@ public class PlayerStateManager : MonoBehaviour
     public float yInput;
     public float wallCoyoteWindow = 0f;
     public float pauseControlTime = 0f;
+    public float playerXScale;
+    public float playerYScale;
 
     private bool playerIsPaused;
     
@@ -70,6 +74,8 @@ public class PlayerStateManager : MonoBehaviour
         wallStickAquired = true;
         glideAquired = true;
 
+        playerXScale = 2;
+        playerYScale = 2;
 
         controlsActive = true;
 
@@ -92,6 +98,12 @@ public class PlayerStateManager : MonoBehaviour
             xInput = Input.GetAxis("Horizontal");
             yInput = Input.GetAxis("Vertical");
         }
+
+        if (!isFacingRight)
+            playerVisual.localScale = new Vector2(-playerXScale, playerVisual.localScale.y);
+        else
+            playerVisual.localScale = new Vector2(playerXScale, playerVisual.localScale.y);
+
 
         if (pauseControlTime > 0f)
         {
@@ -158,9 +170,15 @@ public class PlayerStateManager : MonoBehaviour
         
 
         if (rig.velocity.x > -12f && Input.GetKey(KeyCode.I) && xInput < 0)
+        {
+            ani.SetBool("isDashing", true);
             SwitchState(pivotDashState);
+        }
         else if (rig.velocity.x <= 12f && Input.GetKey(KeyCode.I) && xInput > 0)
+        {
+            ani.SetBool("isDashing", true);
             SwitchState(pivotDashState);
+        }
     }
 
     public void CheckWallStick()
@@ -215,4 +233,14 @@ public class PlayerStateManager : MonoBehaviour
         rig.gravityScale = 6f * multiplyer;
     }
 
+    public void SetAnimationParameters()
+    {
+        ani.SetBool("isAirborne", false);
+        ani.SetBool("isDashing", false);
+        ani.SetBool("isMoving", false);
+        ani.SetBool("isFalling", false);
+        ani.SetBool("isJumping", false);
+        ani.SetBool("isFloating", false);
+        ani.SetBool("isMagnetized", false);
+    }
 }

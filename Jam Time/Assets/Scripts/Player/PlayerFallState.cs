@@ -13,10 +13,12 @@ public class PlayerFallState : PlayerBaseState
 
         player.isGrounded = false;
         
-        player.sr.color = Color.red;
-
         // increase fall speed when decending
         player.SetDefaultgravity();
+
+        player.ani.SetBool("isFalling", true);
+        player.ani.SetBool("isAirborne", true);
+        player.ani.SetBool("isJumping", false);
     }
 
     public override void ExitState(PlayerStateManager player)

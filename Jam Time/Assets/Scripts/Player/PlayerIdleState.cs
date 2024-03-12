@@ -14,11 +14,9 @@ public class PlayerIdleState : PlayerBaseState
         player.glideRenewed = true;
         player.isGrounded = true;
 
-
-        
-        //change color to blue
-        player.sr.color = new Color(0.145f, 0.584f, 0.623f, 1);
-
+        player.ani.SetBool("isMoving", false);
+        player.ani.SetBool("isAirborne", false);
+        player.ani.SetBool("isFalling", false);
     }
 
     public override void ExitState(PlayerStateManager player)

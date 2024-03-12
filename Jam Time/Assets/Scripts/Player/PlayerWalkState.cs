@@ -15,8 +15,9 @@ public class PlayerWalkState : PlayerBaseState
         player.glideRenewed = true;
         player.isGrounded = true;
 
-        // change color
-        player.sr.color = Color.green;
+        player.ani.SetBool("isMoving", true);
+        player.ani.SetBool("isAirborne", false);
+        player.ani.SetBool("isFalling", false);
     }
 
     public override void ExitState(PlayerStateManager player)

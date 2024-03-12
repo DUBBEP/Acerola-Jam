@@ -10,9 +10,6 @@ public class PlayerJumpState : PlayerBaseState
 
         Debug.Log("Hello From Jump");
 
-        // change color to yellow
-        player.sr.color = new Color(0.905f, 0.945f, 0.458f, 1);
-
         player.isGrounded = false;
 
         // set vertical velocity to zero when decending so jump is consistent
@@ -24,6 +21,10 @@ public class PlayerJumpState : PlayerBaseState
         player.rig.AddForce(Vector2.up * player.jumpForce, ForceMode2D.Impulse);
 
         player.rig.gravityScale = player.jumpGravityMultiplyer;
+
+        player.ani.SetBool("isAirborne", true);
+        player.ani.SetBool("isJumping", true);
+        player.ani.SetBool("isFalling", false);
     }
 
     public override void ExitState(PlayerStateManager player)

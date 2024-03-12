@@ -16,7 +16,11 @@ public class PlayerPivotDashState : PlayerBaseState
     public override void EnterState(PlayerStateManager player)
     {
 
+
         Debug.Log("Hello From Dash");
+
+        player.ani.SetBool("isDashing", true);
+
 
         if (player.dashRenewed)
             floatTime = 0.2f;
@@ -43,15 +47,19 @@ public class PlayerPivotDashState : PlayerBaseState
         if (floatTime > 0)
             player.rig.gravityScale = 0f;
 
-        player.sr.color = Color.magenta;
+        //player.sr.color = Color.magenta;
 
         if (!player.isGrounded)
             player.dashRenewed = false;
+
     }
 
     public override void ExitState(PlayerStateManager player)
     {
         player.SetDefaultgravity();
+
+        player.ani.SetBool("isDashing", false);
+
     }
 
     public override void UpdateState(PlayerStateManager player)

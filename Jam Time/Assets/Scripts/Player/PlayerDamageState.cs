@@ -10,7 +10,7 @@ public class PlayerDamageState : PlayerBaseState
     {
         stunTimer = 0.5f;
 
-        player.sr.color = Color.grey;
+        //player.sr.color = Color.grey;
 
         player.rig.velocity = Vector2.zero;
 
@@ -20,6 +20,9 @@ public class PlayerDamageState : PlayerBaseState
             player.rig.AddForce(new Vector2(0.85f, 1.2f) * bounceForce, ForceMode2D.Impulse);
 
         player.SetDefaultgravity();
+
+        player.ani.SetBool("isFalling", true);
+        player.ani.SetBool("isAirborne", true);
     }
 
     public override void ExitState(PlayerStateManager player)
