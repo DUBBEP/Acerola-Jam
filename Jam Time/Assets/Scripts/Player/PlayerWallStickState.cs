@@ -61,11 +61,12 @@ public class PlayerWallStickState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(KeyCode.O) || !player.wallStickAquired)
             player.SwitchState(player.fallState);
 
         if (Input.GetKeyDown(KeyCode.Space))
             player.SwitchState(player.jumpState);
+
 
         player.CheckPivotDash();
 

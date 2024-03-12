@@ -64,7 +64,7 @@ public class PlayerPivotDashState : PlayerBaseState
         if (floatTime <= 0f)
             player.rig.gravityScale = 6f;
 
-        if (exitTime <= 0f)
+        if (exitTime <= 0f || !player.pivotDashAquired)
             player.SwitchState(player.fallState);
 
         if (Input.GetKeyDown(KeyCode.Space) && player.airJumpAvailable)

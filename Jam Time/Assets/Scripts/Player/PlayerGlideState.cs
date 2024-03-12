@@ -58,7 +58,7 @@ public class PlayerGlideState : PlayerBaseState
 
         player.CheckWallStick();
 
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (Input.GetKeyUp(KeyCode.Space) || !player.glideAquired)
             player.SwitchState(player.fallState);
 
         if (Input.GetKeyDown(KeyCode.Space))

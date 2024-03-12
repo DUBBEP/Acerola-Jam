@@ -95,6 +95,8 @@ public class PlayerFallState : PlayerBaseState
     {
         if (collision.gameObject.CompareTag("Terrain"))
             player.wallCoyoteWindow = player.wallCoyoteTime;
+
+
     }
 
 
@@ -102,6 +104,7 @@ public class PlayerFallState : PlayerBaseState
     {
         if (collision.gameObject.CompareTag("Terrain"))
             player.wallCoyoteWindow = player.wallCoyoteTime;
+
     }
 
     public override void OnCollisionExit2D(PlayerStateManager player, Collision2D collision)

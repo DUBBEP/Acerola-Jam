@@ -18,6 +18,7 @@ public class PlayerIdleState : PlayerBaseState
         
         //change color to blue
         player.sr.color = new Color(0.145f, 0.584f, 0.623f, 1);
+
     }
 
     public override void ExitState(PlayerStateManager player)
