@@ -11,9 +11,10 @@ public class GameManager : MonoBehaviour
     private PlayerStateManager playerState;
     private PlayerController playerController;
     public Transform spawnPoint;
+    public EndDoor endDoor;
 
     [Header("GameStatus")]
-    int playerAbilitiesHeld;
+    public int playerAbilitiesHeld;
 
 
     // Start is called before the first frame update
@@ -35,13 +36,34 @@ public class GameManager : MonoBehaviour
     public void CheckGameProgress(AlterStateManager alter, bool itemRemoved)
     {
         if (itemRemoved)
-            playerAbilitiesHeld--;
-        else if (!itemRemoved)
             playerAbilitiesHeld++;
+        else if (!itemRemoved)
+            playerAbilitiesHeld--;
+
+        if (playerAbilitiesHeld <= 0)
+            EndGameActive(true);
+        else if (playerAbilitiesHeld > 0)
+            EndGameActive(false);
 
         GameUI.instance.UpdateProgressionUI(alter, itemRemoved);
     }
 
+    void EndGameActive(bool toggle)
+    {
+        // set endgame text
+        GameUI.instance.endGamePrompt.SetActive(toggle);
 
+        // set door 
+        endDoor.doorActive = toggle;
+        
+
+    }
+
+    public void EndGame()
+    {
+        // load the Title Screen
+
+        // Save time
+    }
 
 }

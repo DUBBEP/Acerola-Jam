@@ -7,7 +7,7 @@ public class AlterStateManager : MonoBehaviour
 {
     public enum AlterType
     {
-        dash,
+        pivotDash,
         wallStick,
         glide
     }
@@ -30,6 +30,7 @@ public class AlterStateManager : MonoBehaviour
     {
         activeState = emptyState;
         activeState.EnterState(this);
+        targetPlayer = FindObjectOfType<PlayerStateManager>().gameObject;
     }
 
     private void Update()
@@ -58,7 +59,7 @@ public class AlterStateManager : MonoBehaviour
     {
         PlayerStateManager player = targetPlayer.GetComponent<PlayerStateManager>();
 
-        if (type == AlterType.dash)
+        if (type == AlterType.pivotDash)
             player.pivotDashAquired = toggle;
         else if ( type == AlterType.wallStick)
             player.wallStickAquired = toggle;

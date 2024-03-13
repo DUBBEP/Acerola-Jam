@@ -21,8 +21,12 @@ public class PlayerDamageState : PlayerBaseState
 
         player.SetDefaultgravity();
 
+        player.sr.color = Color.grey;
+
+        /*
         player.ani.SetBool("isFalling", true);
         player.ani.SetBool("isAirborne", true);
+        */
     }
 
     public override void ExitState(PlayerStateManager player)

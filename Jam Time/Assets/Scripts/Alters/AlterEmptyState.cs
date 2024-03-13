@@ -18,8 +18,18 @@ public class AlterEmptyState : AlterBaseState
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            string message;
+            if (alter.type == AlterStateManager.AlterType.pivotDash)
+                message = "Place Pivot Dash: E";
+            else if (alter.type == AlterStateManager.AlterType.wallStick)
+                message = "Place Wall Stick: E";
+            else if (alter.type == AlterStateManager.AlterType.glide)
+                message = "Place Glide: E";
+            else
+                message = "No type";
+            GameUI.instance.UIPrompt(message);
+
             alter.playerInRange = true;
-            GameUI.instance.PromptItemPlacement(false);
         }
     }
 
@@ -28,7 +38,7 @@ public class AlterEmptyState : AlterBaseState
         if (collision.gameObject.CompareTag("Player"))
         {
             alter.playerInRange = false;
-            GameUI.instance.RemoveItemPrompt();
+            GameUI.instance.RemovePrompt();
         }
     }
 
@@ -36,7 +46,17 @@ public class AlterEmptyState : AlterBaseState
     {
         if (alter.playerInRange && Input.GetKeyDown(KeyCode.E))
         {
-            GameUI.instance.PromptItemPlacement(true);
+            string message;
+            if (alter.type == AlterStateManager.AlterType.pivotDash)
+                message = "Pickup Pivot Dash: E";
+            else if (alter.type == AlterStateManager.AlterType.wallStick)
+                message = "Pickup Wall Stick: E";
+            else if (alter.type == AlterStateManager.AlterType.glide)
+                message = "Pickup Glide: E";
+            else
+                message = "No type";
+            GameUI.instance.UIPrompt(message);
+
             alter.AlterToggle(false);
             alter.itemVisual.enabled = true;
             alter.SwitchState(alter.holdingState);

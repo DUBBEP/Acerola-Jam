@@ -14,9 +14,13 @@ public class PlayerIdleState : PlayerBaseState
         player.glideRenewed = true;
         player.isGrounded = true;
 
+        player.sr.color = Color.cyan;
+
+        /*
         player.ani.SetBool("isMoving", false);
         player.ani.SetBool("isAirborne", false);
         player.ani.SetBool("isFalling", false);
+        */
     }
 
     public override void ExitState(PlayerStateManager player)
@@ -26,7 +30,7 @@ public class PlayerIdleState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
-        if (Mathf.Abs(Input.GetAxis("Horizontal")) < 0.1f)
+        if (Mathf.Abs(Input.GetAxis("Horizontal")) < 0.1f && player.controlsActive)
             player.rig.velocity /= new Vector2(2, 1);
 
 

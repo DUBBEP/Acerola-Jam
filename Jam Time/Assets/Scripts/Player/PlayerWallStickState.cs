@@ -27,9 +27,12 @@ public class PlayerWallStickState : PlayerBaseState
 
         exitingState = false;
 
+        player.sr.color = Color.black;
+
+        /*
         player.ani.SetBool("isAirborne", false);
         player.ani.SetBool("isMagnetized", true);
-
+        */
 
 
     }
@@ -40,7 +43,9 @@ public class PlayerWallStickState : PlayerBaseState
 
         exitingState = true;
 
-        player.ani.SetBool("isMagnetized", false);
+        player.isGrounded = false;
+
+        // player.ani.SetBool("isMagnetized", false);
 
     }
 
@@ -71,12 +76,13 @@ public class PlayerWallStickState : PlayerBaseState
 
         if (Input.GetKeyDown(KeyCode.Space))
             player.SwitchState(player.jumpState);
-
+        
+        /*
         if (player.rig.velocity.x != 0 || player.rig.velocity.y != 0)
             player.ani.SetBool("isMoving", true);
         else
             player.ani.SetBool("isMoving", false);
-
+        */
 
 
         player.CheckPivotDash();
@@ -158,7 +164,7 @@ public class PlayerWallStickState : PlayerBaseState
         if (surfacesInContact == 0 && !onLedge)
             player.SwitchState(player.fallState);
 
-        RotateCharacter(player);
+        // RotateCharacter(player);
         
     }
 
@@ -476,6 +482,8 @@ public class PlayerWallStickState : PlayerBaseState
     }
 
     // rotate the character depending on which surface they're clinging onto
+
+    /*
     void RotateCharacter(PlayerStateManager player)
     {
         Vector2 rightOffSet = new Vector2(-0.5f, 0f);
@@ -524,4 +532,5 @@ public class PlayerWallStickState : PlayerBaseState
                 break;
         }
     }
+    */
 }

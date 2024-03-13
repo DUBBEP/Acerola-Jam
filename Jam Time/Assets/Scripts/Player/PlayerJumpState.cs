@@ -22,9 +22,14 @@ public class PlayerJumpState : PlayerBaseState
 
         player.rig.gravityScale = player.jumpGravityMultiplyer;
 
+        player.sr.color = Color.yellow;
+
+
+        /*            
         player.ani.SetBool("isAirborne", true);
         player.ani.SetBool("isJumping", true);
         player.ani.SetBool("isFalling", false);
+        */
     }
 
     public override void ExitState(PlayerStateManager player)

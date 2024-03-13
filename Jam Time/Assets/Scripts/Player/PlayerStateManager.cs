@@ -74,8 +74,8 @@ public class PlayerStateManager : MonoBehaviour
         wallStickAquired = true;
         glideAquired = true;
 
-        playerXScale = 2;
-        playerYScale = 2;
+        playerXScale = playerVisual.localScale.x;
+        playerYScale = playerVisual.localScale.y;
 
         controlsActive = true;
 
@@ -87,24 +87,7 @@ public class PlayerStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerController.dead)
-            controlsActive = false;
-        else 
-            controlsActive = true;
-
-        if (controlsActive)
-        {
-            activeState.UpdateState(this);
-            xInput = Input.GetAxis("Horizontal");
-            yInput = Input.GetAxis("Vertical");
-        }
-
-        if (!isFacingRight)
-            playerVisual.localScale = new Vector2(-playerXScale, playerVisual.localScale.y);
-        else
-            playerVisual.localScale = new Vector2(playerXScale, playerVisual.localScale.y);
-
-
+        // when controls are paused work to unpause them
         if (pauseControlTime > 0f)
         {
             controlsActive = false;
@@ -122,6 +105,29 @@ public class PlayerStateManager : MonoBehaviour
         curXVel = rig.velocity.x;
 
 
+
+        if (playerController.dead)
+            controlsActive = false;
+        else if (!playerController.dead && !playerIsPaused)
+            controlsActive = true;
+
+        if (controlsActive)
+        {
+            activeState.UpdateState(this);
+            xInput = Input.GetAxis("Horizontal");
+            yInput = Input.GetAxis("Vertical");
+        }
+
+
+        /*
+        if (!isFacingRight)
+            playerVisual.localScale = new Vector2(-playerXScale, playerVisual.localScale.y);
+        else
+            playerVisual.localScale = new Vector2(playerXScale, playerVisual.localScale.y);
+        */
+
+
+
     }
 
     public void SwitchState(PlayerBaseState state)
@@ -134,7 +140,7 @@ public class PlayerStateManager : MonoBehaviour
     {
         activeState.PhysicsUpdate(this);
 
-        if (Mathf.Abs(rig.velocity.x) > speedCap)
+        if (Mathf.Abs(rig.velocity.x) > speedCap && controlsActive)
         {
             if (rig.velocity.x > 0)
                 rig.velocity = new Vector2(rig.velocity.x - 3, rig.velocity.y);
@@ -171,12 +177,12 @@ public class PlayerStateManager : MonoBehaviour
 
         if (rig.velocity.x > -12f && Input.GetKey(KeyCode.I) && xInput < 0)
         {
-            ani.SetBool("isDashing", true);
+            // ani.SetBool("isDashing", true);
             SwitchState(pivotDashState);
         }
         else if (rig.velocity.x <= 12f && Input.GetKey(KeyCode.I) && xInput > 0)
         {
-            ani.SetBool("isDashing", true);
+            // ani.SetBool("isDashing", true);
             SwitchState(pivotDashState);
         }
     }
@@ -233,14 +239,4 @@ public class PlayerStateManager : MonoBehaviour
         rig.gravityScale = 6f * multiplyer;
     }
 
-    public void SetAnimationParameters()
-    {
-        ani.SetBool("isAirborne", false);
-        ani.SetBool("isDashing", false);
-        ani.SetBool("isMoving", false);
-        ani.SetBool("isFalling", false);
-        ani.SetBool("isJumping", false);
-        ani.SetBool("isFloating", false);
-        ani.SetBool("isMagnetized", false);
-    }
 }

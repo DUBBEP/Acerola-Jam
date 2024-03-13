@@ -42,3 +42,21 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BackGround
+    uniqueID: 3784709661
+    locked: 0
+  - name: Obstacles
+    uniqueID: 1478492031
+    locked: 0
+  - name: MCS Entities
+    uniqueID: 3251443713
+    locked: 0
+  - name: Alter
+    uniqueID: 2571867847
+    locked: 0
+  - name: Environment
+    uniqueID: 1987566759
+    locked: 0
+  - name: Player
+    uniqueID: 1356038225
+    locked: 0

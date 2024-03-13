@@ -16,9 +16,13 @@ public class PlayerFallState : PlayerBaseState
         // increase fall speed when decending
         player.SetDefaultgravity();
 
+        player.sr.color = Color.red;
+
+        /*
         player.ani.SetBool("isFalling", true);
         player.ani.SetBool("isAirborne", true);
         player.ani.SetBool("isJumping", false);
+        */
     }
 
     public override void ExitState(PlayerStateManager player)
@@ -28,6 +32,7 @@ public class PlayerFallState : PlayerBaseState
 
     public override void UpdateState(PlayerStateManager player)
     {
+
         player.CheckFacingDirection();
 
         player.SetDefaultgravity();
@@ -67,6 +72,7 @@ public class PlayerFallState : PlayerBaseState
             {
                 player.SwitchState(player.jumpState);
                 player.airJumpAvailable = true;
+                player.dashRenewed = true;
                 player.glideRenewed = true;
             }
             else if (player.xInput != 0)

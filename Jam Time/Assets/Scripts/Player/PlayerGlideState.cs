@@ -10,7 +10,6 @@ public class PlayerGlideState : PlayerBaseState
     {
         Debug.Log("Hello from glide state");
 
-        //player.sr.color = Color.white;
 
         if (player.glideRenewed)
             player.rig.velocity = new Vector2(player.rig.velocity.x, 0);
@@ -21,14 +20,16 @@ public class PlayerGlideState : PlayerBaseState
 
         player.glideRenewed = false;
 
-        player.ani.SetBool("isFloating", true);
+        player.sr.color = Color.white;
+
+        //player.ani.SetBool("isFloating", true);
 
     }
 
     public override void ExitState(PlayerStateManager player)
     {
         player.SetDefaultgravity();
-        player.ani.SetBool("isFloating", false);
+        //player.ani.SetBool("isFloating", false);
 
     }
 

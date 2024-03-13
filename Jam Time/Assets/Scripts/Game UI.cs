@@ -9,15 +9,17 @@ public class GameUI : MonoBehaviour
 {
     public static GameUI instance;
 
-    public TextMeshProUGUI ItemPromptText;
+    public TextMeshProUGUI itemPromptText;
     public Image healthBar;
+    public Image fadeOutScreen;
+    public GameObject endGamePrompt;
+    
 
     public GameObject dashIcon;
     public GameObject glideIcon;
     public GameObject wallStickIcon;
 
     public float barMax;
-
 
     void Awake() { instance = this; }
 
@@ -30,41 +32,40 @@ public class GameUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public void PromptItemPlacement(bool itemAlreadyPlaced)
+    public void UIPrompt(string message)
     {
         // display text
-        ItemPromptText.gameObject.SetActive(true);
+        itemPromptText.gameObject.SetActive(true);
 
         // update text
-        if (itemAlreadyPlaced)
-            ItemPromptText.text = "Pickup Ability: E";
-        else
-            ItemPromptText.text = "Place Ability: E";
+        itemPromptText.text = message;
     }
 
-    public void RemoveItemPrompt()
+    public void RemovePrompt()
     {
         // disable text
-        ItemPromptText.gameObject.SetActive(false);
+        itemPromptText.gameObject.SetActive(false);
     }
 
 
     public void updateHealthBar(int value)
     {
+        Debug.Log("updating HealthBar");
         healthBar.fillAmount = (float)value / barMax;
     }
 
     public void UpdateProgressionUI(AlterStateManager alter, bool toggle)
     {
 
-        if (alter.type == AlterStateManager.AlterType.dash)
+        if (alter.type == AlterStateManager.AlterType.pivotDash)
             dashIcon.SetActive(toggle);
         else if (alter.type == AlterStateManager.AlterType.wallStick)
             wallStickIcon.SetActive(toggle);
         else if (alter.type == AlterStateManager.AlterType.glide)
             glideIcon.SetActive(toggle);
     }
+
 }

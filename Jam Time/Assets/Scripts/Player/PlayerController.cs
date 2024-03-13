@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,10 +13,17 @@ public class PlayerController : MonoBehaviour
     public bool dead;
     private bool respawningPlayer;
 
+
     [Header("Components")]
     Rigidbody2D rb;
     PlayerStateManager stateManager;
     TrailRenderer trail;
+
+    [Header("Parameters")]
+    public float lowerVelBound;
+    public float upperVelBound;
+    public float baseOrthoSize;
+
 
     // Start is called before the first frame update
     void Start()
@@ -72,6 +80,8 @@ public class PlayerController : MonoBehaviour
         // take control away from player
         dead = true;
 
+
+
         // initiate respawn sequence
         if (!respawningPlayer)
         {
@@ -83,10 +93,16 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator RespawnPlayer(int health, float delay)
     {
+
         yield return new WaitForSeconds(delay);
+        GameUI.instance.fadeOutScreen.gameObject.SetActive(true);
         transform.position = GameManager.instance.spawnPoint.position;
         curHp = health;
+        GameUI.instance.updateHealthBar(health);
         dead = false;
+        yield return new WaitForSeconds(delay / 2f);
+        GameUI.instance.fadeOutScreen.gameObject.SetActive(false);
+
     }
 
     void SmoothTrailTime(float target)
@@ -103,6 +119,5 @@ public class PlayerController : MonoBehaviour
         else if (!increase && trail.time > target)
             trail.time -= Time.deltaTime * 2;
     }
-
 
 }
