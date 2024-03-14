@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   damageValue: 10
+  voidOutPoint: {fileID: 1517763567752922246}
 --- !u!60 &8145472597156187327
 PolygonCollider2D:
   m_ObjectHideFlags: 0

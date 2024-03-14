@@ -15,6 +15,8 @@ public class Obstacles : MonoBehaviour
     public Obstacle type;
     public int damageValue;
 
+    public Transform voidOutPoint;
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -22,7 +24,7 @@ public class Obstacles : MonoBehaviour
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
             if (type == Obstacle.spike)
-                player.TakeDamage(damageValue);
+                player.TakeDamage(damageValue, 1f);
         }
     }
 
@@ -33,9 +35,11 @@ public class Obstacles : MonoBehaviour
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
             if (type == Obstacle.acid)
-                player.TakeDamage(damageValue);
+            {
+                player.TakeDamage(damageValue, 2);
+            }
             else if (type == Obstacle.fallingSpike)
-                player.TakeDamage(damageValue); 
+                player.TakeDamage(damageValue, 1f); 
         }
     }
 }

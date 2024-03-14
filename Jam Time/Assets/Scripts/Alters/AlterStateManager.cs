@@ -19,7 +19,10 @@ public class AlterStateManager : MonoBehaviour
     public AlterHoldingState holdingState = new AlterHoldingState();
 
     public SpriteRenderer itemVisual;
-    public GameObject targetPlayer;
+    public Transform alterRespawnPoint;
+
+    GameObject targetPlayer;
+
 
     public bool playerInRange;
 
@@ -67,5 +70,6 @@ public class AlterStateManager : MonoBehaviour
             player.glideAquired = toggle;
 
         GameManager.instance.CheckGameProgress(this, toggle);
+        GameManager.instance.spawnPoint = alterRespawnPoint;
     }
 }

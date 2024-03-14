@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,14 +11,17 @@ public class PlayerController : MonoBehaviour
     [Header("Info")]
     public int maxHp;
     public int curHp;
-    public bool dead;
-    private bool respawningPlayer;
+    public bool dead = false;
+    private bool respawningPlayer = false;
+    private bool invincible = false;
+    private float invincibleTime = 0;
 
 
     [Header("Components")]
     Rigidbody2D rb;
     PlayerStateManager stateManager;
     TrailRenderer trail;
+
 
     [Header("Parameters")]
     public float lowerVelBound;
@@ -36,6 +40,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (invincibleTime >= 0)
+        {
+            invincible = true;
+            invincibleTime -= Time.deltaTime;
+        }
+
+        else if (invincibleTime < 0)
+            invincible = false;
+        
         if (Mathf.Abs(rb.velocity.x) > 20 || Mathf.Abs(rb.velocity.y) > 40)
             SmoothTrailTime(1);
         else
@@ -57,8 +70,14 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, float recoveryTime)
     {
+        if (invincible)
+            damage = 0;
+        else 
+            invincibleTime = recoveryTime;
+
+
         //update health
         curHp -= damage;
 
@@ -68,7 +87,7 @@ public class PlayerController : MonoBehaviour
         // switch playerstate to knockback state
         stateManager.SwitchState(stateManager.damageState);
 
-        if (curHp < 0)
+        if (curHp <= 0)
             Die();
     }
 
@@ -85,23 +104,22 @@ public class PlayerController : MonoBehaviour
         // initiate respawn sequence
         if (!respawningPlayer)
         {
-            StartCoroutine(RespawnPlayer(maxHp, 3f));
+            StartCoroutine(RespawnPlayer(maxHp, GameManager.instance.spawnPoint, 3f));
             respawningPlayer = true;
         }
-
     }
 
-    IEnumerator RespawnPlayer(int health, float delay)
+    public IEnumerator RespawnPlayer(int health, Transform respawnPoint, float delay)
     {
-
         yield return new WaitForSeconds(delay);
         GameUI.instance.fadeOutScreen.gameObject.SetActive(true);
-        transform.position = GameManager.instance.spawnPoint.position;
+        transform.position = respawnPoint.position;
         curHp = health;
         GameUI.instance.updateHealthBar(health);
         dead = false;
         yield return new WaitForSeconds(delay / 2f);
         GameUI.instance.fadeOutScreen.gameObject.SetActive(false);
+        respawningPlayer = false;
 
     }
 
