@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
+    private SpriteRenderer sr;
+    private BoxCollider2D col;
+
     public enum PickupType
     {
         heal
@@ -11,6 +14,20 @@ public class Pickup : MonoBehaviour
 
     public PickupType type;
     public int value;
+    bool pickupConsumed;
+
+    private void Start()
+    {
+        sr = GetComponentInChildren<SpriteRenderer>();
+        col = GetComponent<BoxCollider2D>();
+    }
+
+    private void Update()
+    {
+        if (GameManager.instance.playerIsDead && pickupConsumed)
+            StartCoroutine(RespawnPickup());
+
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -21,7 +38,18 @@ public class Pickup : MonoBehaviour
             if (type == PickupType.heal)
                 player.Heal(value);
 
-            Destroy(this.gameObject);
+            sr.enabled = false;
+            col.enabled = false;
+            pickupConsumed = true;
         }
+    }
+
+    IEnumerator RespawnPickup()
+    {
+        pickupConsumed = false;
+        yield return new WaitForSeconds(3f);
+        Debug.Log("Respawning Pickup");
+        sr.enabled = true;
+        col.enabled = true;
     }
 }

@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
 
         // take control away from player
         dead = true;
-
+        GameManager.instance.playerIsDead = true;
 
 
         // initiate respawn sequence
@@ -117,6 +117,7 @@ public class PlayerController : MonoBehaviour
         curHp = health;
         GameUI.instance.updateHealthBar(health);
         dead = false;
+        GameManager.instance.playerIsDead = true;
         yield return new WaitForSeconds(delay / 2f);
         GameUI.instance.fadeOutScreen.gameObject.SetActive(false);
         respawningPlayer = false;

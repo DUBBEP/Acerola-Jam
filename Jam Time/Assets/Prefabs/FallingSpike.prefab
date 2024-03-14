@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spikeFallSpeed: 3
+  spikePrefab: {fileID: 1323245795731805808}
 --- !u!61 &2270284870454456591
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -13,12 +13,15 @@ public class GameManager : MonoBehaviour
 
     [Header("GameStatus")]
     public int playerAbilitiesHeld = 3;
+    public bool playerIsDead;
 
 
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
+
+        playerIsDead = false;
 
         playerAbilitiesHeld = 3;
     }

@@ -8,6 +8,7 @@ public class FallingSpike : MonoBehaviour
 
 
     private Rigidbody2D spike;
+    private Transform spikeTransform;
     private bool spikeFalling;
 
 
@@ -15,6 +16,7 @@ public class FallingSpike : MonoBehaviour
     void Start()
     {
         spike = GetComponentInChildren<Rigidbody2D>();
+        spikeTransform = GetComponentInChildren<Obstacles>().transform;
     }
 
     // Update is called once per frame
@@ -22,12 +24,26 @@ public class FallingSpike : MonoBehaviour
     {
         if (spikeFalling)
             spike.gravityScale = spikeFallSpeed;
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
+        {
             spikeFalling = true;
+            StartCoroutine(RecallSpike(120f));
+        }
+
+    }
+
+
+    IEnumerator RecallSpike(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Debug.Log("Recalling Spike");
+        spikeFalling = false;
+        spike.gravityScale = 0f;
+        spikeTransform.position = this.transform.position;
+        spike.velocity = Vector2.zero;
     }
 }
