@@ -8,21 +8,17 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [Header("Components")]
-    private PlayerStateManager playerState;
-    private PlayerController playerController;
     public Transform spawnPoint;
     public EndDoor endDoor;
 
     [Header("GameStatus")]
-    public int playerAbilitiesHeld;
+    public int playerAbilitiesHeld = 3;
 
 
     // Start is called before the first frame update
     void Start()
     {
         instance = this;
-        playerState = FindObjectOfType<PlayerStateManager>();
-        playerController = FindObjectOfType<PlayerController>();
 
         playerAbilitiesHeld = 3;
     }
@@ -62,8 +58,10 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         // load the Title Screen
+        SceneManager.LoadScene("Title");
 
         // Save time
+
     }
 
 }

@@ -19,7 +19,7 @@ public class GameUI : MonoBehaviour
     public GameObject glideIcon;
     public GameObject wallStickIcon;
 
-    public float barMax;
+    public float barMax = 100f;
 
     void Awake() { instance = this; }
 
