@@ -117,7 +117,7 @@ public class PlayerController : MonoBehaviour
         curHp = health;
         GameUI.instance.updateHealthBar(health);
         dead = false;
-        GameManager.instance.playerIsDead = true;
+        GameManager.instance.playerIsDead = false;
         yield return new WaitForSeconds(delay / 2f);
         GameUI.instance.fadeOutScreen.gameObject.SetActive(false);
         respawningPlayer = false;
